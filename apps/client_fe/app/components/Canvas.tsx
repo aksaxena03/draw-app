@@ -1,19 +1,18 @@
 "use client";
-import { LucideCircle, LucideLetterText, LucidePencil, LucideRectangleHorizontal, LucideText, LucideTimerReset, LucideUndo, LucideZoomIn, LucideZoomOut } from "lucide-react";
+import { LucideCircle, LucideLetterText, LucidePencil, LucideRectangleHorizontal, LucideUndo, LucideZoomIn, LucideZoomOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import initdraw from "../(dash)/draw";
+import { Game, DrawingStage, GameApi } from "../(dash)/draw/Game";
 
 export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [stage, setStage] = useState<"pencil" | "rect" | "circle" | "text">("pencil");
+    const [stage, setStage] = useState<DrawingStage>("");
     const undoRef = useRef<(() => void) | null>(null);
     const getShapeCountRef = useRef<(() => number) | null>(null);
     const [shapeCount, setShapeCount] = useState(0);
-    const [size,setSize]=useState({"width":0,"height":0})
+    const [size, setSize] = useState({ width: 0, height: 0 });
     const zoomInRef = useRef<(() => void) | null>(null);
     const zoomOutRef = useRef<(() => void) | null>(null);
     const resetViewRef = useRef<(() => void) | null>(null);
-
 
     useEffect(() => {
         // Set initial size
@@ -26,28 +25,44 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
         // Cleanup
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+    const apiRef = useRef<GameApi | null>(null);
+
     useEffect(() => {
         if (canvasRef.current) {
-            initdraw(canvasRef.current, roomid, socket, stage).then((api) => {
-                if (api && api.undoLastShape) {
-                    undoRef.current = api.undoLastShape;
-                }
-                if (api && api.getShapeCount) {
-                    getShapeCountRef.current = api.getShapeCount;
-                    setShapeCount(api.getShapeCount());
-                }
-                if (api && api.zoomIn) {
-                    zoomInRef.current = api.zoomIn;
-                }
-                if (api && api.zoomOut) {
-                    zoomOutRef.current = api.zoomOut;
-                }
-                if (api && api.resetView) {
-                    resetViewRef.current = api.resetView;
-                }
+            let api: GameApi | null = null;
+            
+            Game.create(canvasRef.current, roomid, socket, stage).then((gameApi) => {
+                api = gameApi;
+                apiRef.current = gameApi;
+                undoRef.current = gameApi.undoLastShape;
+                getShapeCountRef.current = gameApi.getShapeCount;
+                setShapeCount(gameApi.getShapeCount());
+                zoomInRef.current = gameApi.zoomIn;
+                zoomOutRef.current = gameApi.zoomOut;
+                resetViewRef.current = gameApi.resetView;
             });
+
+            // // Cleanup function
+            // return () => {
+            //     if (api) {
+            //         api.destroy();
+            //         apiRef.current = null;
+            //         undoRef.current = null;
+            //         getShapeCountRef.current = null;
+            //         zoomInRef.current = null;
+            //         zoomOutRef.current = null;
+            //         resetViewRef.current = null;
+            //     }
+            // };
         }
-    }, [canvasRef, stage, roomid, socket]);
+    }, [canvasRef, roomid, socket]);
+
+    // Update stage when it changes
+    useEffect(() => {
+        if (apiRef.current?.updateStage) {
+            apiRef.current.updateStage(stage);
+        }
+    }, [stage]);
 
     // Update shape count after undo
     const handleUndo = () => {

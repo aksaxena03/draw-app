@@ -15,27 +15,13 @@ export default async function initdraw(canvas: HTMLCanvasElement, roomid: string
     const minScale = 0.2;
     const maxScale = 5;
     const scaleStep = 0.1;
-    // canvas.width=window.innerWidth
-    // canvas.height=window.innerHeight
     const ctx = canvas.getContext("2d")
-    // let typeStage=window.selectedTool
-        // let typeStages=""
-
-    // if(typeStage.pencil===true){
-    //      typeStages="pencil"
-    // }else if(typeStage.circle===true){
-    //      typeStages="circle"
-    // }else if(typeStage.rect===true){
-    //      typeStages="rect"
-    // }
     const existingShape: Shape[] = await getExitingShape(roomid);
     console.log(existingShape)
     console.log(typeStages)
-    // const selectedState = typeStages;
     if (!ctx) {
         return;
     }
-
     socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         if (message.type == "chat_shape") {
@@ -185,15 +171,15 @@ export default async function initdraw(canvas: HTMLCanvasElement, roomid: string
             }),
             roomid
         }))
-        console.log(
-            JSON.stringify({
-                type: "chat_shape",
-                shape: JSON.stringify({
-                    shape
-                }),
-                roomid
-            })
-        )
+        // console.log(
+        //     JSON.stringify({
+        //         type: "chat_shape",
+        //         shape: JSON.stringify({
+        //             shape
+        //         }),
+        //         roomid
+        //     })
+        // )
         await axios.post(`${HTTP_BACKEND}/room/shape/${roomid}`, {
             shape
         },
@@ -207,38 +193,38 @@ export default async function initdraw(canvas: HTMLCanvasElement, roomid: string
         currentPencil = null;
     });
 
-    // Handle zoom with mouse wheel
-    canvas.addEventListener('wheel', (e: WheelEvent) => {
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left - offsetX) / scale;
-        const mouseY = (e.clientY - rect.top - offsetY) / scale;
-        let newScale = scale;
-        if (e.deltaY < 0) {
-            // Zoom in
-            newScale = Math.min(maxScale, scale + scaleStep);
-        } else {
-            // Zoom out
-            newScale = Math.max(minScale, scale - scaleStep);
-        }
-        // Adjust offset so the mouse point stays in the same place
-        offsetX -= (mouseX * newScale - mouseX * scale);
-        offsetY -= (mouseY * newScale - mouseY * scale);
-        scale = newScale;
-        clearCanvas(existingShape, canvas, ctx!);
-    }, { passive: false });
+    // // Handle zoom with mouse wheel
+    // canvas.addEventListener('wheel', (e: WheelEvent) => {
+    //     e.preventDefault();
+    //     const rect = canvas.getBoundingClientRect();
+    //     const mouseX = (e.clientX - rect.left - offsetX) / scale;
+    //     const mouseY = (e.clientY - rect.top - offsetY) / scale;
+    //     let newScale = scale;
+    //     if (e.deltaY < 0) {
+    //         // Zoom in
+    //         newScale = Math.min(maxScale, scale + scaleStep);
+    //     } else {
+    //         // Zoom out
+    //         newScale = Math.max(minScale, scale - scaleStep);
+    //     }
+    //     // Adjust offset so the mouse point stays in the same place
+    //     offsetX -= (mouseX * newScale - mouseX * scale);
+    //     offsetY -= (mouseY * newScale - mouseY * scale);
+    //     scale = newScale;
+    //     clearCanvas(existingShape, canvas, ctx!);
+    // }, { passive: false });
 
-    // Listen for spacebar to enable panning
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            spacePressed = true;
-        }
-    });
-    window.addEventListener('keyup', (e) => {
-        if (e.code === 'Space') {
-            spacePressed = false;
-        }
-    });
+    // // Listen for spacebar to enable panning
+    // window.addEventListener('keydown', (e) => {
+    //     if (e.code === 'Space') {
+    //         spacePressed = true;
+    //     }
+    // });
+    // window.addEventListener('keyup', (e) => {
+    //     if (e.code === 'Space') {
+    //         spacePressed = false;
+    //     }
+    // });
 
     // Helper to extract arguments for drawPreviewShape from a shape object
     function getShapeArgs(shape: Shape) {

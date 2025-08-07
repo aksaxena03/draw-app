@@ -35,7 +35,6 @@ function handleLeaveRoom(user: User, roomId: string) {
 }
 
 async function handleChatShape(user: User, data: any) {
-    // console.log("yhn pr kaam nahi hua")
     const { roomid, shape } = data;
     console.log(data, roomid)
     if (!roomid || !shape) return;
@@ -46,7 +45,6 @@ async function handleChatShape(user: User, data: any) {
             shape
         }
     });
-    // Broadcast to all users in the room (except sender) have to add this feature later
     for (const otherUser of users.values()) {
             try {
                 otherUser.ws.send(JSON.stringify({
@@ -74,9 +72,7 @@ async function handleChat(user: User, data: any) {
             message
         }
     });
-    // Broadcast to all users in the room
     for (const otherUser of users.values()) {
-        // if (otherUser.rooms.has(roomid)) {
         console.log(message,users)
             try {
                 otherUser.ws.send(JSON.stringify({
@@ -87,7 +83,6 @@ async function handleChat(user: User, data: any) {
                 }
             ));
             } catch(e) {console.log("error erroror"+e)}
-        // }
     }
 }
 
