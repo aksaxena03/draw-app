@@ -77,7 +77,7 @@ const getChatHandler = asyncHandler(async (req: Request, res: Response) => {
     const roomId = Number(req.params.roomId);
     const data = await prismaClient.chat.findMany({
         where: { roomId },
-        orderBy: { id: "desc" },
+        orderBy: { id: "asc" },
         take: 50
     });
     return res.json({ data});
@@ -114,7 +114,7 @@ const getShapesHandler = asyncHandler(async (req: Request, res: Response) => {
 const finduser=asyncHandler(async (req: Request, res: Response) => {
     try{const userId=req.params.userid
         const userid = userId?.toString();
-        console.log(userid,userId)
+        // console.log(userid,userId)
     const user=await prismaClient.user.findUnique({where:{id:userid}})
     res.status(200).json({username:user?.name})}
     catch(e){

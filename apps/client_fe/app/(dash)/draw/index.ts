@@ -1,4 +1,4 @@
-import { HTTP_BACKEND } from "@/config"
+// import { process.env.NEXT_PUBLIC_HTTP_BACKEND } from "@/config"
 import axios from "axios"
 
 type Shape =
@@ -82,7 +82,7 @@ export default async function initdraw(canvas: HTMLCanvasElement, roomid: string
                     shape: JSON.stringify({ shape }),
                     roomid
                 }));
-                axios.post(`${HTTP_BACKEND}/room/shape/${roomid}`,
+                axios.post(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/shape/${roomid}`,
                     { shape },
                     { headers: { authorization: token } }
                 );
@@ -180,7 +180,7 @@ export default async function initdraw(canvas: HTMLCanvasElement, roomid: string
         //         roomid
         //     })
         // )
-        await axios.post(`${HTTP_BACKEND}/room/shape/${roomid}`, {
+        await axios.post(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/shape/${roomid}`, {
             shape
         },
             {
@@ -343,7 +343,7 @@ export default async function initdraw(canvas: HTMLCanvasElement, roomid: string
         console.log(existingShape)
     }
     async function getExitingShape(roomid: string) {
-        const res = await axios.get(`${HTTP_BACKEND}/room/getshape/${roomid}`)
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/getshape/${roomid}`)
         const GetShapes = res.data.shape;
         const shapes = GetShapes.map((x: { shape: string }) => {
             const shapeData = JSON.parse(x.shape)

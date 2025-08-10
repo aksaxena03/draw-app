@@ -1,7 +1,9 @@
 "use client";
-import { LucideCircle, LucideLetterText, LucidePencil, LucideRectangleHorizontal, LucideUndo, LucideZoomIn, LucideZoomOut } from "lucide-react";
+import { LucideCircle, LucideLetterText, LucideMinus, LucidePencil, LucidePlus, LucideRectangleHorizontal, LucideUndo, LucideZoomIn, LucideZoomOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Game, DrawingStage, GameApi } from "../(dash)/draw/Game";
+import Chatbox from "./Chatbox";
+import ChatButton from "./ChatButton";
 
 export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,6 +15,7 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
     const zoomInRef = useRef<(() => void) | null>(null);
     const zoomOutRef = useRef<(() => void) | null>(null);
     const resetViewRef = useRef<(() => void) | null>(null);
+    const [logos,setlogos]=useState(true)
 
     useEffect(() => {
         // Set initial size
@@ -41,19 +44,6 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
                 zoomOutRef.current = gameApi.zoomOut;
                 resetViewRef.current = gameApi.resetView;
             });
-
-            // // Cleanup function
-            // return () => {
-            //     if (api) {
-            //         api.destroy();
-            //         apiRef.current = null;
-            //         undoRef.current = null;
-            //         getShapeCountRef.current = null;
-            //         zoomInRef.current = null;
-            //         zoomOutRef.current = null;
-            //         resetViewRef.current = null;
-            //     }
-            // };
         }
     }, [canvasRef, roomid, socket]);
 
@@ -87,54 +77,75 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
     }, []);
 
     return (
-        <div className="w-screen h-screen bg-black">
+        <div onClick={()=>{setlogos(false)}} className="w-screen h-screen bg-black">
             <canvas className="bg-black z-0" ref={canvasRef} width={size.width} height={size.height}></canvas>
-            <div className="top-0 flex flex-row w-screen items-center justify-center p-3 absolute z-10 text-red-50 ">
-                <div className="flex justify-between w-max">
+            <div  className=" top-3.5 w-screen flex flex-row items-center justify-center absolute z-10">
+                <div className="flex justify-between  bg-gray-700 rounded-md p-1">
                     <button
-                     className={`ml-3 ${stage === "pencil" ? "text-amber-600" : "text-amber-50"}`
-                     } onClick={() => setStage("pencil")}> <LucidePencil /> </button>
+                     className={`cursor-pointer p-1 rounded-md hover:text-white hover:bg-indigo-300 text-gray-400  px-3 ${stage === "pencil" ? "text-white bg-indigo-300 opacity-100" : "opacity-50"}`
+                        }   title="Pencil"
+                       onClick={() => setStage("pencil")}> <LucidePencil size={18} /> </button>
                     <button
-                     className={`ml-3 ${stage === "circle" ? "text-amber-600" : "text-amber-50"}`
-                     } onClick={() => setStage("circle")}> <LucideCircle /> </button>
+                     className={`ml-3 cursor-pointer p-1 rounded-md hover:text-white hover:bg-indigo-300 text-gray-400  px-3 ${stage === "circle" ? "text-white  bg-indigo-300 opacity-100" : "opacity-50"}`
+                        }   title="Circle"
+                       onClick={() => setStage("circle")}> <LucideCircle  size={18}/> </button>
                     <button
-                     className={`ml-3 ${stage === "rect" ? "text-amber-600" : "text-amber-50"}`} 
-                     onClick={() => setStage("rect")}> <LucideRectangleHorizontal /> </button>
+                     className={`ml-3 cursor-pointer p-1 rounded-md hover:text-white hover:bg-indigo-300 text-gray-400  px-3 ${stage === "rect" ? "text-white  bg-indigo-300 opacity-100" : "opacity-50"}`} 
+                        title="Rectangle"
+                      onClick={() => setStage("rect")}> <LucideRectangleHorizontal  size={18}/> </button>
                     <button
-                     className={`ml-3 ${stage === "text" ? "text-amber-600" : "text-amber-50"}`} 
-                     onClick={() => setStage("text")}> <LucideLetterText/></button>
-                    <button
-                        onClick={handleUndo}
-                        title="Undo (Ctrl+Z)"
-                        disabled={shapeCount === 0}
-                        className={shapeCount === 0 ? "opacity-50 cursor-not-allowed ml-3" : "ml-3"}
-                    >
-                        <LucideUndo />
-                    </button>
+                     className={`ml-3 cursor-pointer p-1 rounded-md hover:text-white hover:bg-indigo-300 text-gray-400  px-3 ${stage === "text" ? "text-white  bg-indigo-300 opacity-100" : "opacity-50"}`} 
+                        title="Text"
+                      onClick={() => setStage("text")}> <LucideLetterText size={18}/></button>
+                    
+                </div>
+            </div>
+            <div className="bottom-3.5 left-3.5 flex  justify-between absolute">
+               <div className="flex flex-row justify-center bg-gray-700 rounded-md">
+                 
                     <button
                         onClick={() => zoomInRef.current && zoomInRef.current()}
                         title="Zoom In"
-                        className="ml-2 px-2 py-1 bg-gray-700 rounded text-white"
+                        className="cursor-pointer hover:text-white px-2 py-1  rounded text-gray-400"
                     >
-                        <LucideZoomIn/>
-                    </button>
-                    <button
-                        onClick={() => zoomOutRef.current && zoomOutRef.current()}
-                        title="Zoom Out"
-                        className="ml-2 px-2 py-1 bg-gray-700 rounded text-white"
-                    >
-                        <LucideZoomOut/>
-
+                        <LucidePlus size={18}/>
                     </button>
                     <button
                         onClick={() => resetViewRef.current && resetViewRef.current()}
                         title="Reset View"
-                        className="ml-2 px-2 py-1 bg-gray-700 rounded text-white"
+                        className="cursor-pointer hover:text-white px-2 py-1  rounded text-gray-400"
                     >
                         Reset View
                     </button>
+                    <button
+                        onClick={() => zoomOutRef.current && zoomOutRef.current()}
+                        title="Zoom Out"
+                        className="cursor-pointer hover:text-white px-2 py-1  rounded text-gray-400"
+                    >
+                        <LucideMinus size={18}/>
+
+                    </button>
+               </div>
+               <div className="flex flex-row ml-2  px-2  hover:text-white text-gray-400 justify-center bg-gray-700 rounded-md p-1 ">
+                <button
+                        onClick={handleUndo}
+                        title="Undo (Ctrl+Z)"
+                        disabled={shapeCount === 0}
+                        className={shapeCount === 0 ? "opacity-50 cursor-not-allowed" : ""}
+                    >
+                        <LucideUndo  size={18}/>
+                    </button>
+               </div>
+                    
+            </div>
+            <div onClick={()=>{setlogos(false)}} className={`flex top-10  w-screen h-[60%]  items-center justify-center absolute`}>
+                <div className={`bg-[url('/picsvg_download.svg')]  flex  bg-cover bg-center absolute z-20 ${logos?'w-[80%] h-[100%] ':`w-[0%] h-[0%] `}`}>
                 </div>
             </div>
+           <div className="">
+            <ChatButton roomId={roomid}/>
+           </div>
+
         </div>
     );
 }

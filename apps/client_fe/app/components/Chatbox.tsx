@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { LucideSend } from "lucide-react";
-import { HTTP_BACKEND } from "@/config";
+// import { process.env.process.env.NEXT_PUBLIC_HTTP_BACKEND } from "@/config";
 import axios from "axios";
 
 type Chat = { userId: string; message: string; name?: string };
 
-export default function Chatbox({ token, userId }: { token: string | null; userId: string | null }) {
+export default function Chatbox({ token, userId,roomId }: 
+  { token: string | null; userId: string | null,roomId:string }) {
   const [roomid, setRoomid] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
   const [message, setMessage] = useState("");
@@ -23,12 +24,15 @@ export default function Chatbox({ token, userId }: { token: string | null; userI
     }
     return res
   };
+  useEffect(()=>{
+    setRoomid(roomId)
+  })
   
   useEffect(()=>{
     const fetchChats = async () => {
       if (!roomid || roomid === " ") return;
       try {
-        const response = await axios.get(`${HTTP_BACKEND}/chat/${roomid}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/chat/${roomid}`);
         const data = response.data;
         console.log(data.data);
 
@@ -38,7 +42,7 @@ export default function Chatbox({ token, userId }: { token: string | null; userI
             const userIdStr = String(uid);
             if (!userMap[userIdStr]) {
               try {
-                const res = await fetch(`${HTTP_BACKEND}/api/v1/user/${userIdStr}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/api/v1/user/${userIdStr}`);
                 const rm = await res.json();
                 if (rm.username) {
                   setUserMap(prev => ({ ...prev, [userIdStr]: rm.username }));
@@ -88,7 +92,7 @@ export default function Chatbox({ token, userId }: { token: string | null; userI
         // If name not in userMap, fetch and cache it
         console.log(userMap[data.userId])
         if (!userMap[data.userId]) {
-          const rm =fetch(`${HTTP_BACKEND}/api/v1/user/${data.userId}`)
+          const rm =fetch(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/api/v1/user/${data.userId}`)
             .then(res => res.json())
             .then(resData => {
               if (resData.username) {
@@ -137,12 +141,13 @@ export default function Chatbox({ token, userId }: { token: string | null; userI
   };
 
   return (
-    <div className="fixed bottom-4 right-4 w-[1/4] h-96 bg-white border rounded-2xl shadow-lg flex flex-col z-50">
+    <div className="fixed bottom-4 right-4 w-[1/4] h-96 bg-gray-400 text-shadow-white border rounded-2xl shadow-lg flex flex-col z-50">
       <div className="p-2 flex flex-row border-b">
-        Room: {" "}
+        Room: {""}
+        
         <input
           className="ml-2 border rounded px-1 w-[1/1]"
-          value={roomid} id="roomid"
+          value={roomId?roomId:roomid} id="roomid"
           onChange={(e) => {setRoomid(e.target.value)}}
           placeholder="Room ID"
         />
@@ -167,7 +172,7 @@ export default function Chatbox({ token, userId }: { token: string | null; userI
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button
-          className=" p-2 bg-blue-500 text-white rounded-4xl"
+          className=" p-2 bg-indigo-500 text-white rounded-4xl"
           onClick={sendMessage }
         >
           <LucideSend />

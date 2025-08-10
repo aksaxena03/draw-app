@@ -5,7 +5,7 @@
 
 import axios from 'axios';
 import { getExitingShape } from "./http";
-import { HTTP_BACKEND } from '@/config';
+// import { process.env.NEXT_PUBLIC_HTTP_BACKEND } from '.env';
 
 /**
  * Basic point structure used for coordinates
@@ -142,10 +142,11 @@ export class Game {
         this.initMouseHandlers();
     }
 
+
     public destroy(){
         // Remove event listeners
-        window.removeEventListener('keydown', this.handleKeyDown);
-        window.removeEventListener('keyup', this.handleKeyUp);
+        // window.removeEventListener('keydown', this.handleKeyDown);
+        // window.removeEventListener('keyup', this.handleKeyUp);
         this.canvas.removeEventListener('mousedown', this.handleMouseDown);
         this.canvas.removeEventListener('mousemove', this.handleMouseMove);
         this.canvas.removeEventListener('mouseup', this.handleMouseUp);
@@ -307,12 +308,13 @@ export class Game {
 
 
 
-    destroy(){
-         this.canvas.removeEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.canvas.removeEventListener('mouseup', this.handleMouseUp.bind(this));
+    // destroy(){
+    //      this.canvas.removeEventListener('mousedown', this.handleMouseDown.bind(this));
+    //     this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+    //     this.canvas.removeEventListener('mouseup', this.handleMouseUp.bind(this));
     
-    }
+    // }
+
     /**
      * Initialize mouse event handlers for drawing and canvas manipulation
      */
@@ -360,6 +362,20 @@ export class Game {
                 this.addShape(shape);
             }
             this.moving = false;
+        }
+         if (this.currentStage === "rect") {
+            this.canvas.style.cursor = 'crosshair';
+        }
+        else if(this.currentStage === "pencil") {
+            this.canvas.style.cursor = 'pointer';
+           
+        }
+        else if (this.currentStage === "circle") {
+            this.canvas.style.cursor = 'crosshair';
+            
+        }else if (this.currentStage === "text") {
+            this.canvas.style.cursor = 'text';
+            
         }
     }
 
@@ -510,7 +526,7 @@ export class Game {
         }));
 
         // Persist to server
-        await axios.post(`${HTTP_BACKEND}/room/shape/${this.roomid}`,
+        await axios.post(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/shape/${this.roomid}`,
             { shape },
             { headers: { authorization: this.token } }
         );
@@ -597,7 +613,7 @@ export class Game {
 
 // import axios from 'axios';
 // import { getExitingShape } from "./http";
-// import { HTTP_BACKEND } from '@/config';
+// import { process.env.NEXT_PUBLIC_HTTP_BACKEND } from '@/config';
 
 // type Point = { x: number; y: number };
 // interface BaseShape {
@@ -663,7 +679,7 @@ export class Game {
 //         this.canvas = canvas;
 //         this.roomid = roomid;
 //         this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-//         this.socket = new WebSocket(`${HTTP_BACKEND}/ws/${roomid}`);
+//         this.socket = new WebSocket(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/ws/${roomid}`);
         
 //         this.init().catch(console.error);
 //         this.initHandlers();
@@ -899,7 +915,7 @@ export class Game {
 //                     shape: JSON.stringify({ shape }),
 //                     roomid
 //                 }));
-//                 axios.post(`${HTTP_BACKEND}/room/shape/${roomid}`,
+//                 axios.post(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/shape/${roomid}`,
 //                     { shape },
 //                     { headers: { authorization: token } }
 //                 );
@@ -994,7 +1010,7 @@ export class Game {
 //             roomid:this.roomid
 //         }))
        
-//         await axios.post(`${HTTP_BACKEND}/room/shape/${this.roomid}`, {
+//         await axios.post(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/shape/${this.roomid}`, {
 //             shape
 //         },
 //             {

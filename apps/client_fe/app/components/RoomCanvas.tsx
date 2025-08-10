@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { WS_BACKEND } from "@/config";
+// import { WS_BACKEND } from "@/config";
 import { Canvas } from "./Canvas";
 
 export function RoomCanvas({ roomid }: { roomid: string }) {
@@ -15,7 +15,7 @@ export function RoomCanvas({ roomid }: { roomid: string }) {
 
     useEffect(() => {
         if (!token) return;
-        const ws = new WebSocket(`${WS_BACKEND}?token=${token}`);
+        const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_BACKEND}?token=${token}`);
         ws.onopen = () => {
             setSocket(ws);
             ws.send(JSON.stringify({
