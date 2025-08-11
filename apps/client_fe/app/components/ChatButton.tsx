@@ -17,7 +17,7 @@ function decodeUserId(token: string | null): string | null {
   }
 }
 
-export default function ChatButton(roomId:any) {
+export default function ChatButton(roomId?:any) {
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -33,7 +33,12 @@ export default function ChatButton(roomId:any) {
   // console.log("Rendering ChatButton"+ stringify(roomId));
 
   useEffect(
-    ()=>{const hi=(stringify(roomId)).split("=")[1]
+    ()=>{
+      if (!roomId){
+        roomId=""
+      }
+      
+      const hi=(stringify(roomId)).split("=")[1]
 
       setroomid(hi)
     }

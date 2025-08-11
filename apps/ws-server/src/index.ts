@@ -36,7 +36,7 @@ function handleLeaveRoom(user: User, roomId: string) {
 
 async function handleChatShape(user: User, data: any) {
     const { roomid, shape } = data;
-    // console.log(data, roomid)
+    console.log(data, roomid)
     if (!roomid || !shape) return;
     await prismaClient.shape.create({
         data: {
@@ -59,11 +59,11 @@ async function handleChatShape(user: User, data: any) {
 }
 
 async function handleChat(user: User, data: any) {
-    // console.log(data)
-    // console.log("control here")
+    console.log(data)
+    console.log("control here")
 
     const { roomId, message } = data;
-    // console.log(roomId,message)
+    console.log(roomId,message)
     if (!roomId || !message) return;
     await prismaClient.chat.create({
         data: {
@@ -73,7 +73,7 @@ async function handleChat(user: User, data: any) {
         }
     });
     for (const otherUser of users.values()) {
-        // console.log(message,users)
+        console.log(message,users)
             try {
                 otherUser.ws.send(JSON.stringify({
                     type: "chat",
@@ -127,7 +127,7 @@ wss.on('connection', function connection(ws, request) {
                     await handleChatShape(user, parseData);
                     break;
                 case "chat":
-                    // console.log('at chat handeler')
+                    console.log('at chat handeler')
                     await handleChat(user, parseData);
                     
                     break;
