@@ -86,7 +86,7 @@ const getChatHandler = asyncHandler(async (req: Request, res: Response) => {
 const getRoomHandler = asyncHandler(async (req: Request, res: Response) => {
     const slug = req.params.slug;
     const room = await prismaClient.room.findUnique({ where: { slag: slug } });
-    if (!room) {
+    if (!room ||room===undefined) {
         return res.status(404).json({ message: "Room not found" });
     }
     return res.json({ room });

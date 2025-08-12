@@ -75,7 +75,7 @@ export default function Chatbox({
     };
 
     fetchChats();
-  }, [roomid]);
+  },[roomid,userMap]);
 
   useEffect(() => {
     if (!token) return;
@@ -118,7 +118,7 @@ export default function Chatbox({
     return () => {
       ws.current?.close();
     };
-  }, [token, roomid]);
+  },[token,userMap, roomid]);
 
   useEffect(() => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN && roomid) {

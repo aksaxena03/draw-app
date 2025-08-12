@@ -1,9 +1,8 @@
 "use client";
-import { LucideMessageCircleMore, LucideMessageCircleX, LucideMessageSquareMore, LucideMessageSquareOff } from "lucide-react";
+import { LucideMessageSquareMore, LucideMessageSquareOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import Chatbox from "./Chatbox";
 import { stringify } from "querystring";
-import { reduceAppConfig } from "next/dist/build/utils";
 
 function decodeUserId(token: string | null): string | null {
   if (!token) return null;
@@ -17,7 +16,7 @@ function decodeUserId(token: string | null): string | null {
   }
 }
 
-export default function ChatButton(roomId?:any) {
+export default function ChatButton(roomId:{roomId?:string}) {
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -33,11 +32,7 @@ export default function ChatButton(roomId?:any) {
   // console.log("Rendering ChatButton"+ stringify(roomId));
 
   useEffect(
-    ()=>{
-      if (!roomId){
-        roomId=""
-      }
-      
+    ()=>{      
       const hi=(stringify(roomId)).split("=")[1]
 
       setroomid(hi)

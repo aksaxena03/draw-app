@@ -1,13 +1,13 @@
 "use client";
-import { LucideCircle, LucideLetterText, LucideMinus, LucidePencil, LucidePlus, LucideRectangleHorizontal, LucideUndo, LucideZoomIn, LucideZoomOut } from "lucide-react";
+import { LucideCircle, LucideLetterText, LucideMinus, LucidePencil, LucidePlus, LucideRectangleHorizontal, LucideUndo } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Game, DrawingStage, GameApi } from "../(dash)/draw/Game";
-import Chatbox from "./Chatbox";
+// import Chatbox from "./Chatbox";
 import ChatButton from "./ChatButton";
 
 export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [stage, setStage] = useState<DrawingStage>("");
+    const [stage, setStage] = useState<DrawingStage>("pencil");
     const undoRef = useRef<(() => void) | null>(null);
     const getShapeCountRef = useRef<(() => number) | null>(null);
     const [shapeCount, setShapeCount] = useState(0);
@@ -30,12 +30,13 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
     }, []);
     const apiRef = useRef<GameApi | null>(null);
 
+    const apiRoom=roomid
     useEffect(() => {
         if (canvasRef.current) {
-            let api: GameApi | null = null;
+            // let api: GameApi | null = null;
             
             Game.create(canvasRef.current, roomid, socket, stage).then((gameApi) => {
-                api = gameApi;
+                // api = gameApi;
                 apiRef.current = gameApi;
                 undoRef.current = gameApi.undoLastShape;
                 getShapeCountRef.current = gameApi.getShapeCount;
@@ -45,7 +46,7 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
                 resetViewRef.current = gameApi.resetView;
             });
         }
-    }, [canvasRef, roomid, socket]);
+    }, [canvasRef,stage, roomid, socket]);
 
     // Update stage when it changes
     useEffect(() => {
@@ -143,7 +144,7 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
                 </div>
             </div>
            <div className="">
-            <ChatButton roomId={roomid}/>
+            {roomid?<ChatButton roomId={apiRoom} /> : ""}
            </div>
 
         </div>

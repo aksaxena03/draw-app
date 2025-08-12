@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-export type DrawingStage = "pencil" | "rect" | "circle" | "text"|"";
+export type DrawingStage = "pencil" | "rect" | "circle" | "text";
 
 interface DrawingContextType {
     stage: DrawingStage;

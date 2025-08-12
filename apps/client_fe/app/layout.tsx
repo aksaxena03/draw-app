@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Excalidraw",
   description: "clone of Excalidraw",
+  icons:{
+    icon:'/favicon.ico',
+    shortcut:'/favicon.ico',
+    apple:'/favicon.ico',
+  }
 };
 
 export default function RootLayout({
