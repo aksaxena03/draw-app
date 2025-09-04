@@ -7,7 +7,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
-    , "prepare": "corepack enable && corepack prepare pnpm@9.15.9 --activate"
+    
   },
   "devDependencies": {
     "prettier": "^3.5.3",
@@ -17,9 +17,7 @@
   },
   "type": "module",
   
-  "engines": {
-    "node": "20.x"
-  },
+  
   "packageManager": "pnpm@9.15.9"
 
 }
