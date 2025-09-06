@@ -2,7 +2,7 @@ FROM node:18-alpine
 
 RUN corepack enable
 
-ARG DATABASE_URL
+
 WORKDIR /user/src/app
 
 
@@ -21,7 +21,7 @@ COPY ./apps/http-server ./apps/http-server
 
 RUN pnpm run install
 RUN pnpm run db:generate
-RUN ${DATABASE_URL} pnpm run build
+RUN pnpm run build
 
 COPY . .
 

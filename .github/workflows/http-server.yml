@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: checkout the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Dockerlogin
-        uses: doc{{ker/login-action@v2
+        uses: docker/login-action@v3
         with: 
           username: ${{secrets.DOCKERHUB_USERNAME}}
           password: ${{secrets.DOCKERHUB_TOKEN}}
