@@ -25,4 +25,4 @@ RUN pnpm run build --filter=http-server
 
 COPY . .
 
-CMD [ "pnpm " ,"start:http-server" ]
+CMD [ "pnpm " ,"start:http-server","--filter=http-server" ]

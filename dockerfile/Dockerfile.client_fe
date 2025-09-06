@@ -24,4 +24,4 @@ RUN pnpm run build --filter=client_fe
 
 COPY . .
 
-CMD [ "pnpm " ,"start" ]
+CMD [ "pnpm " ,"start","--filter=client_fe" ]

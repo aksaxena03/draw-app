@@ -24,4 +24,4 @@ RUN pnpm run build --filter=ws-server
 
 COPY . .
 
-CMD [ "pnpm" ,"start:ws-server" ]
+CMD [ "pnpm" ,"start:ws-server","--filter=ws-server" ]
