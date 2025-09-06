@@ -16,6 +16,9 @@ COPY apps/http-server/package.json ./apps/http-server/
 # Copy pnpm workspace config
 COPY pnpm-workspace.yaml ./
 
+# Update db package.json with required dependencies
+RUN cd packages/db && pnpm add -D typescript@5.8.2 @types/node
+
 # Copy source files first
 COPY packages/typescript-config ./packages/typescript-config
 COPY packages/db ./packages/db
@@ -33,6 +36,10 @@ RUN echo '{"$schema":"https://json.schemastore.org/tsconfig","compilerOptions":{
 # Update and generate Prisma
 WORKDIR /user/src/app/packages/db
 RUN pnpm remove @prisma/client prisma && pnpm add prisma@5.22.0 -D && pnpm add @prisma/client@5.22.0
+
+# Create local tsconfig for db package
+RUN echo '{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","esModuleInterop":true,"skipLibCheck":true,"strict":true,"outDir":"dist","rootDir":"src","declaration":true,"lib":["ES2022"],"types":["node"]},"include":["src","src/generated/prisma"]}' > tsconfig.json
+
 RUN pnpm prisma generate
 
 # Build packages in order
