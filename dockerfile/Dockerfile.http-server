@@ -16,8 +16,9 @@ COPY apps/http-server/package.json ./apps/http-server/
 # Copy pnpm workspace config
 COPY pnpm-workspace.yaml ./
 
-# Install all dependencies
+# Install dependencies and link packages
 RUN pnpm install
+RUN pnpm link --global @repo/typescript-config
 
 # Copy source files
 COPY packages/db ./packages/db
@@ -26,19 +27,32 @@ COPY packages/common ./packages/common
 COPY packages/typescript-config ./packages/typescript-config
 COPY apps/http-server ./apps/http-server
 
-# Generate Prisma client
+# Generate Prisma client and link typescript config
+WORKDIR /user/src/app/packages/typescript-config
+RUN pnpm link --global
+
 WORKDIR /user/src/app/packages/db
 RUN npx prisma generate
 RUN pwd
 # Build the application
 WORKDIR /user/src/app
 
-# Build dependencies first
-RUN cd packages/backend-comman && pnpm run build
-RUN cd packages/common && pnpm run build
-RUN cd packages/db && pnpm run build
+# Build packages in order
+WORKDIR /user/src/app/packages/typescript-config
+RUN pnpm install
 
-# Build the http-server
-RUN cd apps/http-server && pnpm run build
+WORKDIR /user/src/app/packages/backend-comman
+RUN pnpm install && pnpm run build
+
+WORKDIR /user/src/app/packages/common
+RUN pnpm install && pnpm run build
+
+WORKDIR /user/src/app/packages/db
+RUN pnpm install && pnpm run build
+
+WORKDIR /user/src/app/apps/http-server
+RUN pnpm install && pnpm run build
+
+WORKDIR /user/src/app
 
 CMD ["pnpm", "start:http-server"]
