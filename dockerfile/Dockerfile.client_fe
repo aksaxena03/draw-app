@@ -19,7 +19,7 @@ COPY ./turbo.json ./turbo.json
 COPY ./apps/client_fe ./apps/client_fe
 
 
-RUN pnpm run install
+RUN pnpm run install --filter=client_fe
 RUN pnpm run build
 
 COPY . .
