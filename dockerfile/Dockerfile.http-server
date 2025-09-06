@@ -26,12 +26,14 @@ COPY apps/http-server ./apps/http-server
 # Install all dependencies
 RUN pnpm install
 
-# Generate Prisma client
+# Ensure TypeScript configuration is available
+WORKDIR /user/src/app/packages/typescript-config
+RUN echo '{"$schema":"https://json.schemastore.org/tsconfig","compilerOptions":{"declaration":true,"declarationMap":true,"esModuleInterop":true,"incremental":false,"isolatedModules":true,"lib":["es2022","DOM","DOM.Iterable"],"module":"NodeNext","moduleDetection":"force","moduleResolution":"NodeNext","noUncheckedIndexedAccess":true,"resolveJsonModule":true,"skipLibCheck":true,"strict":true,"target":"ES2022"}}' > base.json
+
+# Update and generate Prisma
 WORKDIR /user/src/app/packages/db
-RUN npx prisma generate
-RUN pwd
-# Build the application
-WORKDIR /user/src/app
+RUN pnpm remove @prisma/client prisma && pnpm add prisma@5.22.0 -D && pnpm add @prisma/client@5.22.0
+RUN pnpm prisma generate
 
 # Build packages in order
 WORKDIR /user/src/app
