@@ -26,7 +26,7 @@ COPY apps/http-server ./apps/http-server
 # Generate Prisma client
 WORKDIR /user/src/app/packages/db
 RUN npx prisma generate
-
+RUN pwd
 # Build the application
 WORKDIR /user/src/app
 RUN pnpm run build --filter=http-server
