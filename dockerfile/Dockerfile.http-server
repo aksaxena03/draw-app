@@ -2,30 +2,31 @@ FROM node:18-alpine
 
 RUN corepack enable
 
-
 WORKDIR /user/src/app
 
-
-
+# Copy all package.json files first
 COPY package.json pnpm-lock.yaml ./
 COPY turbo.json ./
 COPY packages/db/package.json ./packages/db/
+COPY packages/backend-comman/package.json ./packages/backend-comman/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY apps/http-server/package.json ./apps/http-server/
 
-# Install dependencies
-RUN pnpm install --filter=http-server...
+# Install all dependencies
+RUN pnpm install
 
 # Copy source files
 COPY packages/db ./packages/db
+COPY packages/backend-comman ./packages/backend-comman
+COPY packages/typescript-config ./packages/typescript-config
 COPY apps/http-server ./apps/http-server
 
 # Generate Prisma client
 WORKDIR /user/src/app/packages/db
-RUN pnpm install
 RUN npx prisma generate
 
 # Build the application
 WORKDIR /user/src/app
 RUN pnpm run build --filter=http-server
 
-CMD [ "pnpm " ,"start:http-server","--filter=http-server" ]
+CMD ["pnpm", "start:http-server", "--filter=http-server"]
