@@ -31,4 +31,4 @@ RUN npx prisma generate
 WORKDIR /user/src/app
 RUN pnpm run build --filter=http-server
 
-CMD ["pnpm", "start", "--filter=http-server"]
+CMD ["pnpm", "start:http-server"]
