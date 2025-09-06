@@ -29,6 +29,8 @@ RUN npx prisma generate
 RUN pwd
 # Build the application
 WORKDIR /user/src/app
+RUN pwd
+
 RUN pnpm run build --filter=http-server
 
 CMD ["pnpm", "start:http-server"]
