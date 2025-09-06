@@ -7,7 +7,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "db:generate":"cd packages/db && npx prisma generate && cd ../..",
+    "db:generate":"cd packages/db && pnpm i && npx prisma generate && cd ../..",
     "start:web":"cd apps/client && pnpm run start",
     "start:http-server":"cd apps/http-server && node ./dist/index.js",
     "start:ws-server":"cd apps/ws-server && node ./dist/index.js"
