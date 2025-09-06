@@ -29,6 +29,6 @@ RUN npx prisma generate
 
 # Build the application
 WORKDIR /user/src/app
-RUN pnpm run build --filter=@repo/http-server
+RUN pnpm run build --filter=http-server
 
-CMD ["pnpm", "start", "--filter=@repo/http-server"]
+CMD ["pnpm", "start", "--filter=http-server"]
