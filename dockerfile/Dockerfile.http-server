@@ -32,9 +32,13 @@ RUN npx prisma generate
 RUN pwd
 # Build the application
 WORKDIR /user/src/app
-RUN pwd
 
-# Build using turbo
-RUN pnpm turbo run build --filter=./apps/http-server
+# Build dependencies first
+RUN cd packages/backend-comman && pnpm run build
+RUN cd packages/common && pnpm run build
+RUN cd packages/db && pnpm run build
+
+# Build the http-server
+RUN cd apps/http-server && pnpm run build
 
 CMD ["pnpm", "start:http-server"]
