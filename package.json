@@ -7,7 +7,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "db:generate":"cd packages && pnpm i && cd db && npx prisma generate && cd ../..",
+    "db:generate":"cd packages && pnpm i && cd db && pnpm add @prisma/client@5.13.0  && npx prisma generate && cd ../..",
     "start:web":"cd apps/client && pnpm run start",
     "start:http-server":"cd apps/http-server && node ./dist/index.js",
     "start:ws-server":"cd apps/ws-server && node ./dist/index.js"
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "prettier": "^3.5.3",
-    "prisma": "^6.10.1",
+    "prisma": "^5.13.0",
     "turbo": "^2.5.4",
     "typescript": "5.8.2"
   },
