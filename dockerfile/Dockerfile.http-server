@@ -31,6 +31,6 @@ RUN pwd
 WORKDIR /user/src/app
 RUN pwd
 
-RUN pnpm run build --filter=http-server
+RUN pnpm run build --filter http-server
 
 CMD ["pnpm", "start:http-server"]
