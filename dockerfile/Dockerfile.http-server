@@ -37,18 +37,32 @@ RUN echo '{"$schema":"https://json.schemastore.org/tsconfig","compilerOptions":{
 WORKDIR /user/src/app/packages/db
 RUN pnpm remove @prisma/client prisma && pnpm add prisma@5.22.0 -D && pnpm add @prisma/client@5.22.0
 
+# Install TypeScript and Node types
+RUN pnpm add -D typescript@5.8.2 @types/node@20.11.16
+
 # Create local tsconfig for db package
-RUN echo '{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","esModuleInterop":true,"skipLibCheck":true,"strict":true,"outDir":"dist","rootDir":"src","declaration":true,"lib":["ES2022"],"types":["node"]},"include":["src","src/generated/prisma"]}' > tsconfig.json
+RUN echo '{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","esModuleInterop":true,"skipLibCheck":true,"strict":true,"outDir":"dist","rootDir":"src","declaration":true,"lib":["ES2022","DOM","DOM.Iterable"]},"include":["src","src/generated/prisma"]}' > tsconfig.json
 
 RUN pnpm prisma generate
 
 # Build packages in order
 WORKDIR /user/src/app
 
-# Build all dependent packages
-RUN cd packages/backend-comman && pnpm run build
-RUN cd packages/common && pnpm run build
-RUN cd packages/db && pnpm run build
-RUN cd apps/http-server && pnpm run build
+# Install and build backend-comman
+RUN cd packages/backend-comman && pnpm install && pnpm run build
+
+# Install and build common
+RUN cd packages/common && pnpm install && pnpm run build
+
+# Install and build db package
+WORKDIR /user/src/app/packages/db
+RUN pnpm install
+RUN pnpm run build
+
+# Install and build http-server
+WORKDIR /user/src/app/apps/http-server
+RUN pnpm install && pnpm run build
+
+WORKDIR /user/src/app
 
 CMD ["pnpm", "start:http-server"]
