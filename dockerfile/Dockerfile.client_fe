@@ -8,7 +8,7 @@ WORKDIR /user/src/app
 COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 
 
-COPY ./package ./package
+COPY ./packages ./packages
 
 COPY ./package.json ./package.json
 
