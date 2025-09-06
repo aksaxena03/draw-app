@@ -19,9 +19,9 @@ COPY ./turbo.json ./turbo.json
 
 COPY ./apps/http-server ./apps/http-server
 
-RUN pnpm run install --filter=http-server
+RUN pnpm run install 
 RUN pnpm run db:generate
-RUN pnpm run build
+RUN pnpm run build --filter=http-server
 
 COPY . .
 

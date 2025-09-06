@@ -18,9 +18,9 @@ COPY ./turbo.json ./turbo.json
 
 COPY ./apps/ws-server ./apps/ws-server
 
-RUN pnpm run install --filter=ws-server
+RUN pnpm run install 
 RUN  pnpm run db:generate
-RUN pnpm run build
+RUN pnpm run build --filter=ws-server
 
 COPY . .
 
