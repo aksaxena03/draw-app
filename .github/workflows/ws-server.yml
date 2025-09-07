@@ -1,4 +1,4 @@
-name: http_server
+name: ws_server
 on:
   push:
     branches: [main]
