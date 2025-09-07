@@ -1,4 +1,4 @@
-name: http_server
+name: client_fe
 on:
   push:
     branches: [main]
