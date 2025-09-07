@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  http-server:
+    build:
+      context: .
+      dockerfile: Dockerfile/Dockerfile.http-server
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_URL=${{ secrets.DATABASE_URL}}
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+
+  ws-server:
+    build:
+      context: .
+      dockerfile: Dockerfile/Dockerfile.ws
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=${{ secrets.DATABASE_URL}}
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+  
+  client_fe:
+    build:
+      context: .
+      dockerfile: Dockerfile/Dockerfile.client_fe
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      # Extract credentials from DATABASE_URL
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=draw_app
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
