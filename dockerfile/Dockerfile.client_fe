@@ -20,9 +20,8 @@ COPY ./apps/client_fe ./apps/client_fe
 
 
 RUN pnpm install --filter client_fe
-RUN pnpm run db:generate
 RUN pnpm run build --filter=client_fe
 
 COPY . .
 
-CMD [ "pnpm " ,"start","--filter=client_fe" ]
+CMD [ "pnpm " ,"start","client_fe" ]

@@ -9,8 +9,8 @@
     "check-types": "turbo run check-types",
     "db:generate":"cd packages/db && pnpm add @prisma/client@5.13.0  && npx prisma generate && cd ../..",
     "start:web":"cd apps/client && pnpm run start",
-    "start:http-server":"cd apps/http-server && node ./dist/index.js",
-    "start:ws-server":"cd apps/ws-server && node ./dist/index.js"
+    "start:http-server":"cd apps/http-server && pnpm install  && node ./dist/index.js",
+    "start:ws-server":"cd apps/ws-server && pnpm install && node ./dist/index.js"
 
     
   },
