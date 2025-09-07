@@ -1,0 +1,28 @@
+name: http_server
+on:
+  push:
+    branches: [main]
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Docker login
+        uses: docker/login-action@v3
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./dockerfile/Dockerfile.client_fe
+          push: true
+          tags: aksaxena03/draw-app:${{github.sha}}
+      
+        
+
+

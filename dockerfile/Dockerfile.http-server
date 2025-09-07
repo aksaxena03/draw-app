@@ -1,5 +1,9 @@
 FROM node:18-alpine
 
+# Add build-time arguments and environment variables
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 RUN corepack enable
 
 WORKDIR /user/src/app
