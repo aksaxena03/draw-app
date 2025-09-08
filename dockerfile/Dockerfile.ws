@@ -1,8 +1,12 @@
-FROM node:18-alpine
+FROM node:18-bullseye-slim
 
 # Add build-time arguments and environment variables
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN corepack enable
 
@@ -70,6 +74,5 @@ RUN pnpm install && pnpm run build
 WORKDIR /usr/src/app
 
 EXPOSE 8080
-
 
 CMD ["pnpm", "run", "start:ws-server"]
