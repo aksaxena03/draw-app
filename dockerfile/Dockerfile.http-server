@@ -71,4 +71,4 @@ WORKDIR /usr/src/app
 
 EXPOSE 3004
 
-CMD ["pnpm", "start:http-server"]
+CMD ["pnpm", "run", "start:http-server"]
