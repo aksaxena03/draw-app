@@ -1,23 +1,20 @@
 FROM node:18-alpine
 
-# Enable corepack and install turbo globally
-RUN corepack enable
-
 WORKDIR /usr/src/app
 
-# Only copy the client app to avoid monorepo workspace complexity
+# Copy only the client app manifests first for better caching
 COPY apps/client_fe/package.json ./package.json
-COPY apps/client_fe/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY apps/client_fe/package-lock.json ./package-lock.json
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies using npm lockfile
+RUN npm ci
 
 # Copy the rest of the app source
 COPY apps/client_fe .
 
 # Build the application
-RUN pnpm run build
+RUN npm run build
 
 EXPOSE 3000
 
-CMD ["pnpm", "start"]
+CMD ["pnpm", "start:client_fe"]
