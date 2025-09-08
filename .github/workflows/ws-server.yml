@@ -22,5 +22,6 @@ jobs:
           file: ./dockerfile/Dockerfile.ws
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:latest
+         
           build-args: |
             DATABASE_URL=${{ DATABASE_URL }}
