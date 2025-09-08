@@ -22,8 +22,5 @@ jobs:
           file: ./dockerfile/Dockerfile.http-server
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-http:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/draw-app-http:latest
-         
           build-args: |
-            DATABASE_URL=${{ DATABASE_URL }}
-
-   
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
