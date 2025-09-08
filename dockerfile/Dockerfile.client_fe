@@ -1,19 +1,24 @@
 FROM node:18-alpine
 
+RUN corepack enable
+
 WORKDIR /usr/src/app
 
-# Copy only the client app manifests first for better caching
-COPY apps/client_fe/package.json ./package.json
-COPY apps/client_fe/package-lock.json ./package-lock.json
+# Copy workspace manifests
+COPY package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+COPY turbo.json ./
 
-# Install dependencies using npm lockfile
-RUN npm ci
+# Copy client package manifest and source
+COPY apps/client_fe/package.json ./apps/client_fe/package.json
+COPY apps/client_fe ./apps/client_fe
 
-# Copy the rest of the app source
-COPY apps/client_fe .
+# Install only client dependencies and build client
+RUN pnpm install --filter ./apps/client_fe...
+RUN pnpm --filter ./apps/client_fe... run build
 
-# Build the application
-RUN npm run build
+# Run the Next.js server
+WORKDIR /usr/src/app/apps/client_fe
 
 EXPOSE 3000
 
