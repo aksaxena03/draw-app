@@ -4,11 +4,11 @@ services:
   http-server:
     build:
       context: .
-      dockerfile: Dockerfile/Dockerfile.http-server
+      dockerfile: dockerfile/Dockerfile.http-server
     ports:
       - "3004:3004"
     environment:
-      - DATABASE_URL=${{ secrets.DATABASE_URL}}
+      - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=development
     depends_on:
       - postgres
@@ -16,11 +16,11 @@ services:
   ws-server:
     build:
       context: .
-      dockerfile: Dockerfile/Dockerfile.ws
+      dockerfile: dockerfile/Dockerfile.ws
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=${{ secrets.DATABASE_URL}}
+      - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=development
     depends_on:
       - postgres
@@ -28,7 +28,7 @@ services:
   client_fe:
     build:
       context: .
-      dockerfile: Dockerfile/Dockerfile.client_fe
+      dockerfile: dockerfile/Dockerfile.client_fe
     ports:
       - "3000:3000"
     depends_on:
@@ -39,7 +39,6 @@ services:
     ports:
       - "5432:5432"
     environment:
-      # Extract credentials from DATABASE_URL
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=draw_app

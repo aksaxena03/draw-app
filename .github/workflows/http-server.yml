@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
 jobs: 
-  deploy: 
+  build_push_deploy: 
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout code
@@ -21,18 +21,24 @@ jobs:
           context: .
           file: ./dockerfile/Dockerfile.http-server
           push: true
-          tags: aksaxena03/draw-app:${{github.sha}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-http:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/draw-app-http:latest
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
 
-      - name: Deploy to VM
+      - name: Deploy to EC2
+        env:
+          SSH_HOST: ubuntu@34.207.185.175
+          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-http:${{ github.sha }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
           chmod 600 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@34.207.185.175 "
-          docker pull aksaxena03/draw-app:${{github.sha}} &&
-          docker stop http-server || true &&
-          docker rm http-server || true &&
-          docker run -d --name http-server -p 3000:3000 aksaxena03/draw-app:${{github.sha}}
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key $SSH_HOST "
+            docker pull $IMAGE &&
+            docker stop http-server || true &&
+            docker rm http-server || true &&
+            docker run -d --name http-server --restart unless-stopped \
+              -e DATABASE_URL=$DATABASE_URL \
+              -p 3004:3004 $IMAGE
           "
 

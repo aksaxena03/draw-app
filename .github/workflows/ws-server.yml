@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
 jobs: 
-  deploy: 
+  build_push_deploy: 
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout code
@@ -19,23 +19,25 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./dockerfile/Dockerfile.ws-server
+          file: ./dockerfile/Dockerfile.ws
           push: true
-          tags: aksaxena03/draw-app:${{github.sha}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:latest
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
 
-      - name: Deploy to VM
+      - name: Deploy to EC2
         env:
           SSH_HOST: ubuntu@34.207.185.175
-          CONTAINER_NAME: ws-server
-          CONTAINER_PORT: 3000
+          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:${{ github.sha }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
           chmod 600 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@34.207.185.175 "
-          docker pull aksaxena03/draw-app:${{github.sha}} &&
-          docker stop http-server || true &&
-          docker rm http-server || true &&
-          docker run -d --name http-server -p 3000:3000 aksaxena03/draw-app:${{github.sha}}
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key $SSH_HOST "
+            docker pull $IMAGE &&
+            docker stop ws-server || true &&
+            docker rm ws-server || true &&
+            docker run -d --name ws-server --restart unless-stopped \
+              -e DATABASE_URL=$DATABASE_URL \
+              -p 8080:8080 $IMAGE
           "

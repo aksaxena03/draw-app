@@ -1,27 +1,23 @@
 FROM node:18-alpine
 
+# Enable corepack and install turbo globally
 RUN corepack enable
 
-WORKDIR /user/src/app
+WORKDIR /usr/src/app
 
+# Only copy the client app to avoid monorepo workspace complexity
+COPY apps/client_fe/package.json ./package.json
+COPY apps/client_fe/pnpm-lock.yaml ./pnpm-lock.yaml
 
-COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
+# Copy the rest of the app source
+COPY apps/client_fe .
 
-COPY ./packages ./packages
+# Build the application
+RUN pnpm run build
 
-COPY ./package.json ./package.json
+EXPOSE 3000
 
-COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
-
-COPY ./turbo.json ./turbo.json
-
-COPY ./apps/client_fe ./apps/client_fe
-
-
-RUN pnpm install --filter client_fe
-RUN pnpm run build --filter=client_fe
-
-COPY . .
-
-CMD [ "pnpm " ,"start:client_fe" ]
+CMD ["pnpm", "start"]
