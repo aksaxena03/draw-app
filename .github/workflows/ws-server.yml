@@ -24,20 +24,3 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:latest
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
-
-      - name: Deploy to EC2
-        env:
-          SSH_HOST: ubuntu@34.207.185.175
-          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/draw-app-ws:${{ github.sha }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
-          chmod 600 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key $SSH_HOST "
-            docker pull $IMAGE &&
-            docker stop ws-server || true &&
-            docker rm ws-server || true &&
-            docker run -d --name ws-server --restart unless-stopped \
-              -e DATABASE_URL=$DATABASE_URL \
-              -p 8080:8080 $IMAGE
-          "
