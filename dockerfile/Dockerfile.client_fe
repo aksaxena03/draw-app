@@ -1,5 +1,10 @@
 FROM node:18-alpine
 
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    HOSTNAME=0.0.0.0 \
+    PORT=3000
+
 RUN corepack enable
 
 WORKDIR /usr/src/app
@@ -14,7 +19,7 @@ COPY apps/client_fe/package.json ./apps/client_fe/package.json
 COPY apps/client_fe ./apps/client_fe
 
 # Install only client dependencies and build client
-RUN pnpm install --filter ./apps/client_fe...
+RUN pnpm install --filter ./apps/client_fe... --frozen-lockfile
 RUN pnpm --filter ./apps/client_fe... run build
 
 # Run the Next.js server
@@ -22,4 +27,4 @@ WORKDIR /usr/src/app/apps/client_fe
 
 EXPOSE 3000
 
-CMD ["pnpm", "start:client_fe"]
+CMD ["pnpm", "start"]

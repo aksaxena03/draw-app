@@ -8,10 +8,9 @@
     "./client": "./dist/db.js"
   },
   "scripts": {
-    "build": "tsc -b && pnpm copy-prisma",
+    "build": "pnpm db:generate && tsc -b && pnpm copy-prisma",
     "copy-prisma": "xcopy src\\generated dist\\generated /E /I /Y >nul 2>nul || cp -r src/generated dist/generated || :",
-    "test": "echo \"Error: no test specified\" && exit 1"
-    , "db:generate": "prisma generate",
+    "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate"
   },
   "devDependencies": {

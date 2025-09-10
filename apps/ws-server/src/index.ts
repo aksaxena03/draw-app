@@ -2,9 +2,27 @@ import jwt from "jsonwebtoken";
 import { WebSocketServer, WebSocket } from "ws";
 import { prismaClient } from "@repo/db/client";
 import { jwt_secret } from "@repo/backend-comman/config";
+import http from "http";
 
-const wss = new WebSocketServer({ port: 8080 });
-console.log("|at 8080");
+const WS_PORT = Number(process.env.PORT || 8080);
+const HEALTH_PORT = Number(process.env.HEALTH_PORT || 8081);
+
+const wss = new WebSocketServer({ port: WS_PORT });
+console.log(`| WebSocket listening at ${WS_PORT}`);
+
+// Minimal health server
+const healthServer = http.createServer((req, res) => {
+    if (req.url === "/health") {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("ok");
+        return;
+    }
+    res.writeHead(404);
+    res.end();
+});
+healthServer.listen(HEALTH_PORT, "0.0.0.0", () => {
+    console.log(`| Health endpoint on ${HEALTH_PORT}`);
+});
 
 interface User {
     userId: string;

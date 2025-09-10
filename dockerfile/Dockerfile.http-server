@@ -1,11 +1,13 @@
 FROM node:18-bullseye-slim
 
+ENV NODE_ENV=production
+
 # Add build-time arguments and environment variables
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssl ca-certificates && \
+    openssl ca-certificates curl && \
     rm -rf /var/lib/apt/lists/*
 
 RUN corepack enable
@@ -35,7 +37,7 @@ COPY packages/common ./packages/common
 COPY apps/http-server ./apps/http-server
 
 # Install all dependencies
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Ensure TypeScript configuration is available
 WORKDIR /usr/src/app/packages/typescript-config

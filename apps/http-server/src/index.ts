@@ -137,6 +137,10 @@ const user=asyncHandler(async (req: Request, res: Response) => {
     }
 })
 
+app.get('/health', (_req: Request, res: Response) => {
+    res.status(200).send('ok');
+});
+
 app.post('/signup', signupHandler);
 app.post('/signin', signinHandler);
 app.post('/room', Middleware, createRoomHandler);
