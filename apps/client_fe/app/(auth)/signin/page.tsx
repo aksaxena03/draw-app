@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
+export const dynamic = "force-dynamic";
+const http=process.env.NEXT_PUBLIC_HTTP_BACKEND
 export default function SignIn() {
   const router = useRouter();
   const [data, setData] = useState({ email: "", password: "" });
@@ -20,7 +21,7 @@ export default function SignIn() {
     e.preventDefault(); // prevent page reload
 
     try {
-      const responses = await axios.post("http://localhost:3004/Signin", {
+      const responses = await axios.post(`${http}/Signin`, {
         email: data.email,
         password: data.password,
       });
@@ -109,4 +110,3 @@ export default function SignIn() {
     </main>
   );
 }
-

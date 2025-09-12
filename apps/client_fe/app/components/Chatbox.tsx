@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { LucideSend } from "lucide-react";
 import axios from "axios";
-
+const http=process.env.NEXT_PUBLIC_HTTP_BACKEND
+const WS=process.env.NEXT_PUBLIC_WS_BACKEND
 type Chat = { userId: string; message: string; name?: string };
 
 export default function Chatbox({
@@ -79,7 +80,7 @@ export default function Chatbox({
 
   useEffect(() => {
     if (!token) return;
-    ws.current = new WebSocket(`ws://localhost:8080?token=${token}`);
+    ws.current = new WebSocket(`${WS}?token=${token}`);
     ws.current.onopen = () => {
       if (roomid) {
         ws.current?.send(

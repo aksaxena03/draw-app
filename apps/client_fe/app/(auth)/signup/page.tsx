@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+const http=process.env.NEXT_PUBLIC_HTTP_BACKEND
 
 export default function Signup() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function Signup() {
     if (!passwordsMatch) return;
 
     try {
-      await axios.post("http://localhost:3004/Signup", {
+      await axios.post(`${http}/Signup`, {
         name: data.name,
         email: data.email,
         password: data.password,
