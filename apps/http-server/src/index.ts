@@ -93,19 +93,39 @@ const getRoomHandler = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const addShapeHandler = asyncHandler(async (req: Request, res: Response) => {
-    const roomId = Number(req.params.roomId);
+    const roomParam = req.params.roomId;
+    const maybeId = Number(roomParam);
+    let room = Number.isNaN(maybeId)
+        ? null
+        : await prismaClient.room.findUnique({ where: { id: maybeId } });
+    if (!room) {
+        room = await prismaClient.room.findUnique({ where: { slag: String(roomParam) } });
+    }
+    if (!room) {
+        return res.status(404).json({ message: "Room not found" });
+    }
     const shapeData = JSON.stringify(req.body.shape);
     const userId = (req as any).userId;
     const shape = await prismaClient.shape.create({
-        data: { roomId, userId, shape: shapeData }
+        data: { roomId: room.id, userId, shape: shapeData }
     });
     return res.json({ shape });
 });
 
 const getShapesHandler = asyncHandler(async (req: Request, res: Response) => {
-    const roomId = Number(req.params.roomId);
+    const roomParam = req.params.roomId;
+    const maybeId = Number(roomParam);
+    let room = Number.isNaN(maybeId)
+        ? null
+        : await prismaClient.room.findUnique({ where: { id: maybeId } });
+    if (!room) {
+        room = await prismaClient.room.findUnique({ where: { slag: String(roomParam) } });
+    }
+    if (!room) {
+        return res.status(404).json({ message: "Room not found" });
+    }
     const shapes = await prismaClient.shape.findMany({
-        where: { roomId },
+        where: { roomId: room.id },
         orderBy: { id: "desc" },
         take: 20
     });

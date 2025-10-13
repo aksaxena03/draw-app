@@ -34,6 +34,11 @@ export default function Signup() {
     e.preventDefault();
     if (!passwordsMatch) return;
 
+    if (!http) {
+      alert("Backend URL is not configured. Please set NEXT_PUBLIC_HTTP_BACKEND.");
+      return;
+    }
+
     try {
       await axios.post(`${http}/Signup`, {
         name: data.name,

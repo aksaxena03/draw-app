@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import { jwt_secret } from "@repo/backend-comman/config";
 
 export function Middleware(req:Request,res:Response,next:NextFunction){
-    // console.log(req.headers)
+    console.log(req.headers)
     const token=req.headers["authorization"];
-    // console.log(token)
+    console.log(token)
     // if(!token){return}
     if (!token) {
         res.status(401).json({ message: "unauthorized: token missing" });

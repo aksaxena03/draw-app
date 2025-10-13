@@ -8,10 +8,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "db:generate": "pnpm --dir packages/db run db:generate",
-    "start:web": "cd apps/client && pnpm run start",
+    "start:client_fe": "cd apps/client_fe && pnpm run start",
     "start:http-server": "cd apps/http-server && node ./dist/index.js",
     "start:ws-server": "cd apps/ws-server && node ./dist/index.js"
-
+    ,"start":"concurrently -n http-server,client_fe,ws-server -c green,red,blue \" pnpm run start:client_fe \" \"pnpm run start:http-server \" \"pnpm run start:ws-server \""
     
   },
   "devDependencies": {

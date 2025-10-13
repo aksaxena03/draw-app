@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { LucideSend } from "lucide-react";
 import axios from "axios";
-const http=process.env.NEXT_PUBLIC_HTTP_BACKEND
 const WS=process.env.NEXT_PUBLIC_WS_BACKEND
 type Chat = { userId: string; message: string; name?: string };
 

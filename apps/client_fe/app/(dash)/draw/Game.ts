@@ -152,10 +152,7 @@ export class Game {
         this.canvas.removeEventListener('mouseup', this.handleMouseUp);
         this.canvas.removeEventListener('wheel', this.handleWheel);
 
-        // Close WebSocket connection
-        if (this.socket) {
-            this.socket.close();
-        }
+        // Do not close the shared WebSocket here; it's managed by the caller
 
         // Clear canvas
         if (this.ctx) {
@@ -264,6 +261,7 @@ export class Game {
             }
         }
         this.ctx.restore();
+       
     }
 
     /**
@@ -333,6 +331,7 @@ export class Game {
      */
     private handleMouseDown(e: MouseEvent): void {
         // Check if we should start panning (space pressed)
+        
         if (this.spacePressed) {
             this.isPanning = true;
             this.panStartX = e.clientX - this.lastOffsetX;
@@ -393,7 +392,6 @@ export class Game {
             this.drawExistingShapes();
             return;
         }
-
         // If we're not drawing, do nothing
         if (!this.moving) return;
 
@@ -427,6 +425,7 @@ export class Game {
                 endingAngle: Math.PI * 2
             });
         }
+        
     }
 
     /**
@@ -475,14 +474,17 @@ export class Game {
                 endingAngle: Math.PI * 2
             };
         }
-
+        
         // Save the shape if one was created
         if (shape) {
             await this.addShape(shape);
         }
-
+        // this.destroy()
+        
         // Reset the current pencil stroke
-        this.currentPencil = null;
+        // this.currentPencil = null;
+        // this.destroy()
+         
     }
 
     /**
@@ -505,7 +507,7 @@ export class Game {
             this.scale = newScale;
             this.offsetX = e.clientX - rect.left - mouseX * this.scale;
             this.offsetY = e.clientY - rect.top - mouseY * this.scale;
-
+            // this.destroy()
             this.drawExistingShapes();
         }
     }
@@ -518,18 +520,39 @@ export class Game {
         // Add to local collection
         this.existingShape.push(shape);
 
-        // Send to other users via WebSocket
-        this.socket.send(JSON.stringify({
-            type: "chat_shape",
-            shape: JSON.stringify({ shape }),
-            roomid: this.roomid
-        }));
+        // Broadcast over WebSocket (only if open)
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify({
+                type: "chat_shape",
+                shape: JSON.stringify({ shape }),
+                roomid: this.roomid
+            }));
+        }
 
         // Persist to server
-        await axios.post(`${process.env.NEXT_PUBLIC_HTTP_BACKEND}/room/shape/${this.roomid}`,
-            { shape },
-            { headers: { authorization: this.token } }
-        );
+        const baseUrl = process.env.NEXT_PUBLIC_HTTP_BACKEND as string | undefined;
+        if (!baseUrl || !this.token) return;
+
+        let targetRoomId = this.roomid;
+        if (!/^\d+$/.test(targetRoomId)) {
+            try {
+                const res = await axios.get(`${baseUrl}/room/${targetRoomId}`, {
+                    headers: { authorization: this.token }
+                });
+                targetRoomId = String(res.data?.room?.id ?? targetRoomId);
+            } catch {
+                return;
+            }
+        }
+
+        try {
+            await axios.post(`${baseUrl}/room/shape/${targetRoomId}`,
+                { shape },
+                { headers: { authorization: this.token } }
+            );
+        } catch {
+            // ignore persist error to avoid breaking UX
+        }
     }
 
     /**

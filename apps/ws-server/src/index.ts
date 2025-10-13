@@ -35,9 +35,11 @@ const users: Map<string, User> = new Map();
 function checkUser(token: string): string | null {
     try {
         const decode = jwt.verify(token, jwt_secret) as { userid?: string };
+        console.log(decode)
         if (!decode || !decode.userid) {
             return null;
         }
+        console.log(decode.userid)
         return decode.userid;
     } catch (e) {
         return null;
@@ -54,7 +56,7 @@ function handleLeaveRoom(user: User, roomId: string) {
 
 async function handleChatShape(user: User, data: any) {
     const { roomid, shape } = data;
-    console.log(data, roomid)
+    console.log(data, roomid ,user)
     if (!roomid || !shape) return;
     await prismaClient.shape.create({
         data: {
@@ -82,7 +84,7 @@ async function handleChat(user: User, data: any) {
 
     const { roomId, message } = data;
     console.log(roomId,message)
-    if (!roomId || !message) return;
+    if (!roomId || !message) return(console.log("no roomId or message"));
     await prismaClient.chat.create({
         data: {
             userId: user.userId,

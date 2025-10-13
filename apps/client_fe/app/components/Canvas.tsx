@@ -12,10 +12,11 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
     const getShapeCountRef = useRef<(() => number) | null>(null);
     const [shapeCount, setShapeCount] = useState(0);
     const [size, setSize] = useState({ width: 0, height: 0 });
+
     const zoomInRef = useRef<(() => void) | null>(null);
     const zoomOutRef = useRef<(() => void) | null>(null);
     const resetViewRef = useRef<(() => void) | null>(null);
-    const [logos,setlogos]=useState(true)
+    // const [logos,setlogos]=useState(true)
 
     useEffect(() => {
         // Set initial size
@@ -34,9 +35,9 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
     useEffect(() => {
         if (canvasRef.current) {
             // let api: GameApi | null = null;
-            
+            let isMounted = true;
             Game.create(canvasRef.current, roomid, socket, stage).then((gameApi) => {
-                // api = gameApi;
+                if (!isMounted) return;
                 apiRef.current = gameApi;
                 undoRef.current = gameApi.undoLastShape;
                 getShapeCountRef.current = gameApi.getShapeCount;
@@ -45,9 +46,18 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
                 zoomOutRef.current = gameApi.zoomOut;
                 resetViewRef.current = gameApi.resetView;
             });
+            return () => {
+                isMounted = false;
+                apiRef.current?.destroy();
+                apiRef.current = null;
+
+            };
+
         }
     }, [canvasRef,stage, roomid, socket]);
 
+
+    
     // Update stage when it changes
     useEffect(() => {
         if (apiRef.current?.updateStage) {
@@ -78,7 +88,9 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
     }, []);
 
     return (
-        <div onClick={()=>{setlogos(false)}} className="w-screen h-screen bg-black">
+        // <div onClick={()=>{setlogos(false)}} className="w-screen h-screen bg-black">
+        <div  className="w-screen h-screen bg-black">
+
             <canvas className="bg-black z-0" ref={canvasRef} width={size.width} height={size.height}></canvas>
             <div  className=" top-3.5 w-screen flex flex-row items-center justify-center absolute z-10">
                 <div className="flex justify-between  bg-gray-700 rounded-md p-1">
@@ -139,10 +151,7 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
                </div>
                     
             </div>
-            <div onClick={()=>{setlogos(false)}} className={`flex top-10  w-screen h-[60%]  items-center justify-center absolute`}>
-                <div className={`bg-[url('/picsvg_download.svg')]  flex  bg-cover bg-center absolute z-20 ${logos?'w-[80%] h-[100%] ':`w-[0%] h-[0%] `}`}>
-                </div>
-            </div>
+            
            <div className="">
             {roomid?<ChatButton roomId={apiRoom} /> : ""}
            </div>
