@@ -53,7 +53,7 @@ RUN pnpm add -D typescript@5.8.2 @types/node@20.11.16
 # Create local tsconfig for db package
 RUN echo '{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","esModuleInterop":true,"skipLibCheck":true,"strict":true,"outDir":"dist","rootDir":"src","declaration":true,"lib":["ES2022","DOM","DOM.Iterable"]},"include":["src","src/generated/prisma"]}' > tsconfig.json
 
-RUN pnpm prisma generate
+RUN pnpm db:generate
 
 # Build packages in order
 WORKDIR /usr/src/app

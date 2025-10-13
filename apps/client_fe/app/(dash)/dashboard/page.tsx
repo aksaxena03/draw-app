@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import ChatButton from "@/app/components/ChatButton";
+import ChatButton from "../../components/ChatButton";
 
 export default function Dashboard() {
     const router = useRouter();

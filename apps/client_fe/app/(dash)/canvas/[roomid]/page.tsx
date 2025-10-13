@@ -1,4 +1,4 @@
-import { RoomCanvas } from "@/app/components/RoomCanvas";
+import { RoomCanvas } from "../../../components/RoomCanvas";
 
 type PageProps = {
     params: Promise<{ roomid: string }>;
