@@ -37,7 +37,7 @@ COPY packages/common ./packages/common
 COPY apps/http-server ./apps/http-server
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Ensure TypeScript configuration is available
 WORKDIR /usr/src/app/packages/typescript-config

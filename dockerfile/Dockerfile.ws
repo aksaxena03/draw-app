@@ -35,7 +35,7 @@ COPY packages/common ./packages/common
 COPY apps/ws-server ./apps/ws-server
 
 # Install all dependencies
-RUN pnpm install
+RUN pnpm install --no-frozen-lockfile
 
 # Ensure TypeScript configuration is available
 WORKDIR /usr/src/app/packages/typescript-config

@@ -8,7 +8,6 @@ const WS_PORT = Number(process.env.PORT || 8080);
 const HEALTH_PORT = Number(process.env.HEALTH_PORT || 8081);
 
 const wss = new WebSocketServer({ port: WS_PORT });
-console.log(`| WebSocket listening at ${WS_PORT}`);
 
 // Minimal health server
 const healthServer = http.createServer((req, res) => {
@@ -21,7 +20,6 @@ const healthServer = http.createServer((req, res) => {
     res.end();
 });
 healthServer.listen(HEALTH_PORT, "0.0.0.0", () => {
-    console.log(`| Health endpoint on ${HEALTH_PORT}`);
 });
 
 interface User {
@@ -35,11 +33,11 @@ const users: Map<string, User> = new Map();
 function checkUser(token: string): string | null {
     try {
         const decode = jwt.verify(token, jwt_secret) as { userid?: string };
-        console.log(decode)
+        
         if (!decode || !decode.userid) {
             return null;
         }
-        console.log(decode.userid)
+        
         return decode.userid;
     } catch (e) {
         return null;
@@ -56,7 +54,7 @@ function handleLeaveRoom(user: User, roomId: string) {
 
 async function handleChatShape(user: User, data: any) {
     const { roomid, shape } = data;
-    console.log(data, roomid ,user)
+    
     if (!roomid || !shape) return;
     await prismaClient.shape.create({
         data: {
@@ -73,18 +71,18 @@ async function handleChatShape(user: User, data: any) {
                     roomId: Number(roomid),
                     shape
                 }));
-            } catch(e) {console.log(e)}
+            } catch(e) {}
         
     }
 }
 
 async function handleChat(user: User, data: any) {
-    console.log(data)
-    console.log("control here")
+    
+    
 
     const { roomId, message } = data;
-    console.log(roomId,message)
-    if (!roomId || !message) return(console.log("no roomId or message"));
+    
+    if (!roomId || !message) return;
     await prismaClient.chat.create({
         data: {
             userId: user.userId,
@@ -93,7 +91,7 @@ async function handleChat(user: User, data: any) {
         }
     });
     for (const otherUser of users.values()) {
-        console.log(message,users)
+        
             try {
                 otherUser.ws.send(JSON.stringify({
                     type: "chat",
@@ -102,7 +100,7 @@ async function handleChat(user: User, data: any) {
                     message
                 }
             ));
-            } catch(e) {console.log("error erroror"+e)}
+            } catch(e) {}
     }
 }
 
@@ -147,7 +145,7 @@ wss.on('connection', function connection(ws, request) {
                     await handleChatShape(user, parseData);
                     break;
                 case "chat":
-                    console.log('at chat handeler')
+                    
                     await handleChat(user, parseData);
                     
                     break;

@@ -14,12 +14,15 @@ COPY package.json pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
 
-# Copy client package manifest and source
+# Copy all package manifests
+COPY packages/ ./packages/
 COPY apps/client_fe/package.json ./apps/client_fe/package.json
+
+# Copy client source
 COPY apps/client_fe ./apps/client_fe
 
-# Install only client dependencies and build client
-RUN pnpm install --filter ./apps/client_fe... --frozen-lockfile
+# Install all dependencies and build client
+RUN pnpm install --no-frozen-lockfile
 RUN pnpm --filter ./apps/client_fe... run build
 
 # Run the Next.js server

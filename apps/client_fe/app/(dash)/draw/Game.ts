@@ -1,15 +1,7 @@
-/**
- * This is a collaborative drawing application that allows multiple users to draw shapes
- * in real-time using WebSocket communication.
- */
 
 import axios from 'axios';
 import { getExitingShape } from "./http";
-// import { process.env.NEXT_PUBLIC_HTTP_BACKEND } from '.env';
 
-/**
- * Basic point structure used for coordinates
- */
 type Point = { x: number; y: number };
 
 /**
@@ -65,14 +57,7 @@ interface TextShape extends BaseShape {
  */
 type Shape = RectShape | PencilShape | CircleShape | TextShape;
 
-/**
- * Extend Window interface to include our global properties
- */
-// declare global {
-//     interface Window {
-//         token: string;  // Authentication token
-//     }
-// }
+ 
 
 /**
  * Main game class that handles the drawing canvas and all interactions
@@ -101,7 +86,7 @@ export class Game {
     private existingShape: Shape[] = [];       // All shapes that have been drawn
     private roomid: string;                    // Current room ID for collaboration
     private currentStage: DrawingStage;        // Current drawing stage
-    // private currentStage: DrawingStage;        // Current drawing tool
+    
 
     // Drawing state
     private moving = false;                    // Whether we're currently drawing
@@ -191,13 +176,7 @@ export class Game {
         this.drawExistingShapes();
     }
 
-    /**
-     * Clear the canvas and redraw all existing shapes
-     */
-    /**
-     * Clear the canvas and redraw all existing shapes
-     * Takes into account current scale and offset
-     */
+    
     private drawExistingShapes(): void {
         this.clearCanvas();
         // Draw each shape with current view transformations
@@ -283,11 +262,11 @@ export class Game {
      * Initialize WebSocket and keyboard event handlers
      */
     private initHandlers(): void {
-        // Handle incoming WebSocket messages
+        
         this.socket.onmessage = (event: MessageEvent) => {
             const message = JSON.parse(event.data);
             if (message.type === "chat_shape") {
-                // Add new shape from other users and redraw
+                
                 const { shape } = JSON.parse(message.shape);
                 this.existingShape.push(shape);
                 this.drawExistingShapes();
@@ -304,14 +283,7 @@ export class Game {
         });
     }
 
-
-
-    // destroy(){
-    //      this.canvas.removeEventListener('mousedown', this.handleMouseDown.bind(this));
-    //     this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
-    //     this.canvas.removeEventListener('mouseup', this.handleMouseUp.bind(this));
     
-    // }
 
     /**
      * Initialize mouse event handlers for drawing and canvas manipulation

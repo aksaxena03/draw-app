@@ -113,7 +113,7 @@ export default function Chatbox({
       }
     };
     ws.current.onclose = () => {
-      console.log("WebSocket disconnected");
+      
     };
     return () => {
       ws.current?.close();

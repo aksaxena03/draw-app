@@ -11,7 +11,7 @@ function decodeUserId(token: string | null): string | null {
     const payload = JSON.parse(payloadStr);
     return payload.userid || payload.userId || payload.sub || null;
   } catch (e) {
-    console.log("JWT decode error:", e);
+    
     return null;
   }
 }
@@ -26,10 +26,10 @@ export default function ChatButton(roomId:{roomId?:string}) {
     const t = localStorage.getItem("token");
     setToken(t);
     setUserId(decodeUserId(t));
-    // console.log("Decoded userId:", (decodeUserId(t)).userId);
+    
   }, []);
 
-  // console.log("Rendering ChatButton"+ stringify(roomId));
+  
 
   useEffect(
     ()=>{      
