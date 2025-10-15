@@ -46,6 +46,7 @@ function checkUser(token: string): string | null {
 
 function handleJoinRoom(user: User, roomId: string) {
     user.rooms.add(roomId);
+    // console.log(`User ${user.userId} joined room ${roomId}. User rooms:`, Array.from(user.rooms));
 }
 
 function handleLeaveRoom(user: User, roomId: string) {
@@ -54,26 +55,34 @@ function handleLeaveRoom(user: User, roomId: string) {
 
 async function handleChatShape(user: User, data: any) {
     const { roomid, shape } = data;
-    
+    // console.log(JSON.stringify(data))
     if (!roomid || !shape) return;
-    await prismaClient.shape.create({
+  
+    // console.log("Broadcasting shape to users in room:", roomid, "Total users:", users.size);
+    // Broadcast to users in the same room
+    for (const otherUser of users.values()) {
+        if (otherUser.ws.readyState === WebSocket.OPEN && otherUser.rooms.has(roomid)) {
+            try {
+              otherUser.ws.send(JSON.stringify({
+                    type: "chat_shape",
+                    userId: user.userId,
+                    roomId: Number(roomid),
+                    shape
+                }));
+                // console.log("Sent shape to user:", otherUser.userId);
+            } catch(e) {
+                console.error("Error sending shape:", e);
+            }
+        }
+    }
+      await prismaClient.shape.create({
         data: {
             userId: user.userId,
             roomId: Number(roomid),
             shape
         }
     });
-    for (const otherUser of users.values()) {
-            try {
-                otherUser.ws.send(JSON.stringify({
-                    type: "chat_shape",
-                    userId: user.userId,
-                    roomId: Number(roomid),
-                    shape
-                }));
-            } catch(e) {}
-        
-    }
+    // return "success"
 }
 
 async function handleChat(user: User, data: any) {
@@ -81,27 +90,34 @@ async function handleChat(user: User, data: any) {
     
 
     const { roomId, message } = data;
-    
-    if (!roomId || !message) return;
-    await prismaClient.chat.create({
-        data: {
-            userId: user.userId,
-            roomId: Number(roomId),
-            message
-        }
-    });
+    console.log(roomId,message+"at chat handler")
+    // if (!roomId || !message) return;
+   console.log(JSON.stringify(data) +"at 95")
+    // Broadcast to users in the same room
     for (const otherUser of users.values()) {
-        
+        console.log(otherUser+ user.userId)
+        // if (otherUser.ws.readyState === WebSocket.OPEN && otherUser.rooms.has(roomId)) {
             try {
                 otherUser.ws.send(JSON.stringify({
                     type: "chat",
                     userId: user.userId,
                     roomId: Number(roomId),
                     message
-                }
-            ));
-            } catch(e) {}
-    }
+                }));
+                console.log(otherUser.userId+ " at106")
+            } catch(e) {
+                console.error("Error sending chat at 109: ", e);
+            }
+        }
+    
+    let prchar=await prismaClient.chat.create({
+        data: {
+            userId: user.userId,
+            roomId: Number(roomId),
+            message
+        }
+    });
+   console.log(prchar+"at 118")
 }
 
 wss.on('connection', function connection(ws, request) {
@@ -145,7 +161,6 @@ wss.on('connection', function connection(ws, request) {
                     await handleChatShape(user, parseData);
                     break;
                 case "chat":
-                    
                     await handleChat(user, parseData);
                     
                     break;

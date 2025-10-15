@@ -7,7 +7,7 @@ import ChatButton from "./ChatButton";
 
 export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [stage, setStage] = useState<DrawingStage>("pencil");
+    const [stage, setStage] = useState<DrawingStage>("");
     const undoRef = useRef<(() => void) | null>(null);
     const getShapeCountRef = useRef<(() => number) | null>(null);
     const [shapeCount, setShapeCount] = useState(0);
@@ -45,22 +45,23 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
                 zoomInRef.current = gameApi.zoomIn;
                 zoomOutRef.current = gameApi.zoomOut;
                 resetViewRef.current = gameApi.resetView;
+                // apiRef.current.destroy();
             });
             return () => {
                 isMounted = false;
                 apiRef.current?.destroy();
-                apiRef.current = null;
-
+                // apiRef.current = null;
             };
 
         }
-    }, [canvasRef,stage, roomid, socket]);
+    }, [roomid]);
 
 
     
     // Update stage when it changes
     useEffect(() => {
         if (apiRef.current?.updateStage) {
+            // apiRef.current.destroy();
             apiRef.current.updateStage(stage);
         }
     }, [stage]);

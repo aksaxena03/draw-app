@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LucideSend } from "lucide-react";
 import axios from "axios";
-const WS=process.env.NEXT_PUBLIC_WS_BACKEND
+const WS = process.env.NEXT_PUBLIC_WS_BACKEND || "ws://localhost:8080";
 type Chat = { userId: string; message: string; name?: string };
 
 export default function Chatbox({

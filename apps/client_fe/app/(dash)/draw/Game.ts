@@ -62,7 +62,7 @@ type Shape = RectShape | PencilShape | CircleShape | TextShape;
 /**
  * Main game class that handles the drawing canvas and all interactions
  */
-export type DrawingStage = "pencil" | "rect" | "circle" | "text";
+export type DrawingStage = "pencil" | "rect" | "circle" | "text"|"";
 
 export interface GameApi {
     undoLastShape: () => void;
@@ -132,10 +132,10 @@ export class Game {
         // Remove event listeners
         // window.removeEventListener('keydown', this.handleKeyDown);
         // window.removeEventListener('keyup', this.handleKeyUp);
-        this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-        this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-        this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-        this.canvas.removeEventListener('wheel', this.handleWheel);
+        this.canvas.removeEventListener('mousedown', this.handleMouseDown.bind(this));
+        this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.canvas.removeEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.canvas.removeEventListener('wheel', this.handleWheel.bind(this));
 
         // Do not close the shared WebSocket here; it's managed by the caller
 
@@ -288,6 +288,7 @@ export class Game {
     /**
      * Initialize mouse event handlers for drawing and canvas manipulation
      */
+    
     
     private initMouseHandlers(): void {
         // Bind event handlers to maintain correct 'this' context
@@ -446,15 +447,16 @@ export class Game {
                 endingAngle: Math.PI * 2
             };
         }
-        
+        // this.destroy()
         // Save the shape if one was created
         if (shape) {
             await this.addShape(shape);
+            
         }
         // this.destroy()
         
         // Reset the current pencil stroke
-        // this.currentPencil = null;
+        this.currentPencil = null;
         // this.destroy()
          
     }

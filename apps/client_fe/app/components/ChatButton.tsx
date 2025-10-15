@@ -10,7 +10,7 @@ function decodeUserId(token: string | null): string | null {
     const payloadStr = atob(token.split('.')[1]);
     const payload = JSON.parse(payloadStr);
     return payload.userid || payload.userId || payload.sub || null;
-  } catch (e) {
+  } catch{
     
     return null;
   }

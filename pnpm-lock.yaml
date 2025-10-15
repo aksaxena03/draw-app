@@ -49,7 +49,7 @@ importers:
         specifier: ^3
         version: 3.3.1
       '@tailwindcss/postcss':
-        specifier: ^4
+        specifier: ^4.1.11
         version: 4.1.11
       '@types/node':
         specifier: ^20
@@ -162,13 +162,13 @@ importers:
 
   packages/db:
     dependencies:
-      '@prisma/client':
-        specifier: 6.16.1
-        version: 6.16.1(prisma@6.16.1(typescript@5.8.2))(typescript@5.8.2)
       zod:
         specifier: ^3.25.67
         version: 3.25.76
     devDependencies:
+      '@prisma/client':
+        specifier: 6.16.1
+        version: 6.16.1(prisma@6.16.1(typescript@5.8.2))(typescript@5.8.2)
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
