@@ -1,33 +1,32 @@
-FROM node:18-alpine
-
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    HOSTNAME=0.0.0.0 \
-    PORT=3000
+FROM node:18-bullseye-slim
 
 RUN corepack enable
 
 WORKDIR /usr/src/app
 
-# Copy workspace manifests
+# Copy all package.json files first
 COPY package.json pnpm-lock.yaml ./
-COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
+COPY apps/client_fe/package.json ./apps/client_fe/
 
-# Copy all package manifests
-COPY packages/ ./packages/
-COPY apps/client_fe/package.json ./apps/client_fe/package.json
+# Copy pnpm workspace config
+COPY pnpm-workspace.yaml ./
 
-# Copy client source
+# Copy source files first
 COPY apps/client_fe ./apps/client_fe
 
-# Install all dependencies and build client
+# Install all dependencies
 RUN pnpm install --no-frozen-lockfile
-RUN pnpm --filter ./apps/client_fe... run build
 
-# Run the Next.js server
+# Build packages in order
+WORKDIR /usr/src/app
+
+# Build client_fe (dependencies already installed)
 WORKDIR /usr/src/app/apps/client_fe
+RUN pnpm run build
+
+WORKDIR /usr/src/app
 
 EXPOSE 3000
 
-CMD ["pnpm", "start"]
+CMD ["pnpm", "run", "start:client_fe"]

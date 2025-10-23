@@ -1,13 +1,11 @@
 FROM node:18-bullseye-slim
 
-ENV NODE_ENV=production
-
 # Add build-time arguments and environment variables
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssl ca-certificates curl && \
+    openssl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 RUN corepack enable
@@ -37,7 +35,7 @@ COPY packages/common ./packages/common
 COPY apps/http-server ./apps/http-server
 
 # Install all dependencies
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install
 
 # Ensure TypeScript configuration is available
 WORKDIR /usr/src/app/packages/typescript-config
@@ -53,7 +51,7 @@ RUN pnpm add -D typescript@5.8.2 @types/node@20.11.16
 # Create local tsconfig for db package
 RUN echo '{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","esModuleInterop":true,"skipLibCheck":true,"strict":true,"outDir":"dist","rootDir":"src","declaration":true,"lib":["ES2022","DOM","DOM.Iterable"]},"include":["src","src/generated/prisma"]}' > tsconfig.json
 
-RUN pnpm db:generate
+RUN pnpm prisma generate
 
 # Build packages in order
 WORKDIR /usr/src/app

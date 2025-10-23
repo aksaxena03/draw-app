@@ -79,10 +79,10 @@ export class Game {
     private canvas: HTMLCanvasElement;         // The canvas element we draw on
     private ctx: CanvasRenderingContext2D;     // Canvas rendering context
 
-    private token = localStorage.getItem('token')
+    private token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
 
     // Communication
-    private socket: WebSocket;                 // WebSocket connection for real-time updates
+    private socket: WebSocket | null;         // WebSocket connection for real-time updates
     private existingShape: Shape[] = [];       // All shapes that have been drawn
     private roomid: string;                    // Current room ID for collaboration
     private currentStage: DrawingStage;        // Current drawing stage
@@ -116,7 +116,7 @@ export class Game {
      * @param canvas - The canvas element to draw on
      * @param roomid - Unique identifier for the collaborative room
      */
-    private constructor(canvas: HTMLCanvasElement, roomid: string, socket: WebSocket, initialStage: DrawingStage) {
+    private constructor(canvas: HTMLCanvasElement, roomid: string, socket: WebSocket | null, initialStage: DrawingStage) {
         this.canvas = canvas;
         this.roomid = roomid;
         this.socket = socket;
@@ -145,7 +145,7 @@ export class Game {
         }
     }
 
-    public static async create(canvas: HTMLCanvasElement, roomid: string, socket: WebSocket, initialStage: DrawingStage): Promise<GameApi> {
+    public static async create(canvas: HTMLCanvasElement, roomid: string, socket: WebSocket | null, initialStage: DrawingStage): Promise<GameApi> {
         const game = new Game(canvas, roomid, socket, initialStage);
         await game.init();
         
@@ -263,15 +263,17 @@ export class Game {
      */
     private initHandlers(): void {
         
-        this.socket.onmessage = (event: MessageEvent) => {
-            const message = JSON.parse(event.data);
-            if (message.type === "chat_shape") {
-                
-                const { shape } = JSON.parse(message.shape);
-                this.existingShape.push(shape);
-                this.drawExistingShapes();
-            }
-        };
+        if (this.socket) {
+            this.socket.onmessage = (event: MessageEvent) => {
+                const message = JSON.parse(event.data);
+                if (message.type === "chat_shape") {
+                    
+                    const { shape } = JSON.parse(message.shape);
+                    this.existingShape.push(shape);
+                    this.drawExistingShapes();
+                }
+            };
+        }
 
         // Handle spacebar for panning
         window.addEventListener('keydown', (e) => {

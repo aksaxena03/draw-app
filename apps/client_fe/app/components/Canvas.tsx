@@ -5,7 +5,7 @@ import { Game, DrawingStage, GameApi } from "../(dash)/draw/Game";
 // import Chatbox from "./Chatbox";
 import ChatButton from "./ChatButton";
 
-export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }) {
+export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket | null }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [stage, setStage] = useState<DrawingStage>("");
     const undoRef = useRef<(() => void) | null>(null);
@@ -54,6 +54,7 @@ export function Canvas({ roomid, socket }: { roomid: string; socket: WebSocket }
             };
 
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roomid]);
 
 

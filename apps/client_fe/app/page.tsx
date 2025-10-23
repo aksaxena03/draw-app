@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col bg-[#2f2f2f] text-white">
